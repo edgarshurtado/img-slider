@@ -37,30 +37,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       imgSlider.imgUrlArray = imgArray;
 
-      function imgSliderDefaultData(imgSlider){
-        var slidesArray = imgSlider.querySelectorAll("img");
-        var numberSlides = slidesArray.length;
-        var defaultSlide = imgSlider.querySelector("img[active]");
-        var defaultSrc = defaultSlide.src;
-
-          return {
-            slidesArray: slidesArray,
-            numberSlides: numberSlides,
-            defaultSrc: defaultSrc,
-            defaultSlide: defaultSlide
-          }
-      };
-
-
-      function changeActiveSlide(index){
-        imgSlider.querySelector("img[active]").removeAttribute("active");
-
-        var targetUrl = imgArray[index];
-        imgSlider._currentSlideIndex = index;
-
-        imgSlider.querySelector("img[src='" + targetUrl + "']").setAttribute("active", "");
-      }
-
       suite('<img-slider>', function() {
 
         test('number of slides correct', function() {
@@ -69,19 +45,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
 
         test('default slide correct', function(){
-          var defaultSrc = imgSliderDefaultData(imgSlider).defaultSrc;
+          var defaultSrc = imgSlider.querySelector("img[active]").src;
           assert.equal(defaultSrc, imgArray[0]);
         });
 
         test('next slide correct', function(){
           imgSlider.nextSlide();
-          var defaultSrc = imgSliderDefaultData(imgSlider).defaultSrc;
+          var defaultSrc = imgSlider.querySelector("img[active]").src;
           assert.equal(defaultSrc, imgArray[1]);
         });
 
         test("next slide when the last is selected", function(){
 
-          changeActiveSlide(imgArray.length - 1);
+          imgSlider.selectSlide(imgArray.length - 1);
 
 
           //Pass 1 slide
@@ -90,8 +66,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // Check that the new active slide is the first image
           var currentActiveSrc = imgSlider.querySelector("img[active]").src;
           assert.equal(currentActiveSrc, imgArray[0]);
-
-
         })
 
       });

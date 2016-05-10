@@ -208,7 +208,10 @@ Example:
     },
 
     selectSlide: function(index){
-
+      Polymer.dom(this.$$("img[active]")).removeAttribute("active");
+      var targetSrc = this.imgUrlArray[index];
+      Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
+      this._currentSlideIndex = index;
     }
   });
 
