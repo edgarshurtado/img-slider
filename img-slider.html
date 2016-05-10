@@ -23,6 +23,7 @@ Example:
   <style>
     :host {
       display: block;
+      position: relative;
     }
     .wrapper {
       width: 300px;
@@ -30,6 +31,7 @@ Example:
       overflow: auto;
       margin-left: auto;
       margin-right: auto;
+      position: relative;
     }
 
     img{
@@ -44,13 +46,47 @@ Example:
     img[active]{
       display: inline-block;
     }
+
+    .control {
+      width: 20%;
+      height: 100%;
+      background-color: rgba(0,0,0, 0.5);
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      color:white;
+      opacity: 0;
+    }
+
+    .control:hover {
+      opacity: 1;
+    }
+
+    .control_left{
+      left: 0;
+    }
+
+    .control_right{
+      right: 0;
+    }
+
+    .navigation_icon {
+      position: absolute;
+      font-size: 2em;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
   </style>
 
   <template>
     <div class="wrapper">
+      <div class="control control_left"><span class="navigation_icon">&lt;</span></div>
       <template is="dom-repeat" items="[[imgUrlArray]]">
         <img src="[[item]]" alt="">
       </template>
+      <div class="control control_right"><span class="navigation_icon">&gt;</span></div>
     </div>
   </template>
 
