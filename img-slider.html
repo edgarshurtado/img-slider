@@ -35,16 +35,21 @@ Example:
     }
 
     img{
-      display: none;
-      position: relative;
+      position: absolute;
       width: 100%;
       top: 50%;
       transform: translateY(-50%);
       left: 0;
+      -webkit-transition: opacity 5s ease-in-out;
+      -moz-transition: opacity 5s ease-in-out;
+      -ms-transition: opacity 5s ease-in-out;
+      -o-transition: opacity 5s ease-in-out;
+      transition: opacity 5s ease-in-out;
+      opacity: 0;
     }
 
     img[active]{
-      display: inline-block;
+      opacity: 1;
     }
 
     .control {
@@ -56,6 +61,7 @@ Example:
       top: 0;
       color:white;
       opacity: 0;
+      cursor: pointer;
     }
 
     .control:hover {
@@ -86,7 +92,7 @@ Example:
       <template is="dom-repeat" items="[[imgUrlArray]]">
         <img src="[[item]]" alt="">
       </template>
-      <div class="control control_right"><span class="navigation_icon">&gt;</span></div>
+      <div class="control control_right" on-tap="_nextSlide"><span class="navigation_icon">&gt;</span></div>
     </div>
   </template>
 
@@ -126,7 +132,15 @@ Example:
           };
         }
       },
-
+      /**
+       * Indicates the number of the current image being displayed
+       *
+       * @type Number
+       * */
+      _currentSlideIndex:{
+        type: Number,
+        value: 0
+      }
     },
 
     // Element Lifecycle
@@ -149,8 +163,9 @@ Example:
       // visual state or active behavior (measuring sizes, beginning animations,
       // loading resources, etc).
 
-      var images = Polymer.dom(this.root).querySelectorAll("img");
-      Polymer.dom(images[2]).setAttribute("active", "");
+      this._images = Polymer.dom(this.root).querySelectorAll("img");
+      this._currentActive = this._images[this._currentSlideIndex];
+      Polymer.dom(this._currentActive).setAttribute("active", "");
     },
 
     detached: function() {
@@ -180,16 +195,23 @@ Example:
       return 'img-slider says, ' + response;
     },
 
-    /**
-     * Attempts to destroy this element's enemies with an any beam of light!
-     *
-     * Or, at least, dispatches an event in the vain hope that someone else will
-     * do the zapping.
-     */
-    fireLasers: function() {
-      this.fire('img-slider-lasers', {sound: 'Pew pew!'});
-    }
+    _nextSlide: function(){
+      var numberImages = this._images.length;
+      var currentAvtive = Polymer.dom(this._images[this._currentSlideIndex]);
+      var newIndex;
+      Polymer.dom(currentAvtive).removeAttribute("active");
 
+      if(this._currentSlideIndex === numberImages -1){
+        newIndex = 0;
+      } else {
+        newIndex = this._currentSlideIndex + 1;
+      }
+
+      var newActive = Polymer.dom(this._images[newIndex]);
+      Polymer.dom(newActive).setAttribute("active", "");
+
+      this._currentSlideIndex = newIndex;
+    }
   });
 
 </script>
