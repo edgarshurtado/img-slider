@@ -23,25 +23,35 @@ Example:
   <style>
     :host {
       display: block;
-      box-sizing: border-box;
+    }
+    .wrapper {
+      width: 300px;
+      height: 300px;
+      overflow: auto;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .author img {
-      float: left;
-      margin-right: 5px;
-      max-height: 100px;
-      max-width: 100px;
+    img{
+      display: none;
+      position: relative;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 0;
+    }
+
+    img[active]{
+      display: inline-block;
     }
   </style>
 
   <template>
-    <h1>&lt;img-slider&gt;</h1>
-    <content></content>
-    <p class="author">
-      <img src="{{author.image}}">
-      Cheers,<br/>
-      <span class="name">{{author.name}}</span>
-    </p>
+    <div class="wrapper">
+      <template is="dom-repeat" items="[[imgUrlArray]]">
+        <img src="[[item]]" alt="">
+      </template>
+    </div>
   </template>
 
 </dom-module>
@@ -54,11 +64,7 @@ Example:
 
     properties: {
 
-      /**
-       * `fancy` indicates that the element should don a monocle and tophat,
-       * while checking its pocket watch.
-       */
-      fancy: Boolean,
+      imgUrlArray: Array,
 
       /**
        * Describes the author of the element, but is really just an excuse to
@@ -96,6 +102,7 @@ Example:
       //
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
+
     },
 
     attached: function() {
@@ -105,6 +112,9 @@ Example:
       // This is a good place to perform any work related to your element's
       // visual state or active behavior (measuring sizes, beginning animations,
       // loading resources, etc).
+
+      var images = Polymer.dom(this.root).querySelectorAll("img");
+      Polymer.dom(images[2]).setAttribute("active", "");
     },
 
     detached: function() {
