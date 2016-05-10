@@ -22,31 +22,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <seed-element></seed-element>
+    <img-slider></img-slider>
 
     <script>
-      var myEl = document.querySelector('seed-element');
+      var myEl = document.querySelector('img-slider');
 
-      suite('<seed-element>', function() {
+      suite('<img-slider>', function() {
 
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dimitri Glazkov');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
+        var imgArray = [
+          "http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg",
+          "http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg",
+          "https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg"
+        ];
+
+        myEl.imgUrlArray = imgArray;
+
+
+        test('number of slides correct', function() {
+          var numberSlides = myEl.querySelectorAll("img").length;
+          assert.equal(numberSlides, 3);
         });
 
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'seed-element says, Hello World!');
-
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'seed-element says, greetings Earthlings');
+        test('default slide correct', function(){
+          var defaultSrc = myEl.querySelector("img[active]").src;
+          assert.equal(defaultSrc, imgArray[0]);
         });
 
-        test('fires lasers', function(done) {
-          myEl.addEventListener('seed-element-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
-            done();
-          });
-          myEl.fireLasers();
+        test('next slide correct', function(){
+          myEl._nextSlide();
+          var defaultSrc = myEl.querySelector("img[active]").src;
+          assert.equal(defaultSrc, imgArray[1]);
+
         });
 
       });
