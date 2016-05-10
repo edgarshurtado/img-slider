@@ -132,15 +132,6 @@ Example:
           };
         }
       },
-      /**
-       * Indicates the number of the current image being displayed
-       *
-       * @type Number
-       * */
-      _currentSlideIndex:{
-        type: Number,
-        value: 0
-      }
     },
 
     // Element Lifecycle
@@ -163,6 +154,7 @@ Example:
       // visual state or active behavior (measuring sizes, beginning animations,
       // loading resources, etc).
 
+      this._currentSlideIndex = 0;
       this._images = Polymer.dom(this.root).querySelectorAll("img");
       this._currentActive = this._images[this._currentSlideIndex];
       Polymer.dom(this._currentActive).setAttribute("active", "");
@@ -173,6 +165,8 @@ Example:
       // removed from a document.
       //
       // Use this to clean up anything you did in `attached`.
+
+      Polymer.dom(this._currentActive).removeAttribute("active");
     },
 
     // Element Behavior
@@ -195,11 +189,11 @@ Example:
       return 'img-slider says, ' + response;
     },
 
-    _nextSlide: function(){
+    nextSlide: function(){
       var numberImages = this._images.length;
-      var currentAvtive = Polymer.dom(this._images[this._currentSlideIndex]);
+      var currentActive = Polymer.dom(this._images[this._currentSlideIndex]);
       var newIndex;
-      Polymer.dom(currentAvtive).removeAttribute("active");
+      Polymer.dom(currentActive).removeAttribute("active");
 
       if(this._currentSlideIndex === numberImages -1){
         newIndex = 0;
@@ -211,6 +205,10 @@ Example:
       Polymer.dom(newActive).setAttribute("active", "");
 
       this._currentSlideIndex = newIndex;
+    },
+
+    selectSlide: function(index){
+
     }
   });
 

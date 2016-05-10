@@ -16,44 +16,83 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
+
     <!-- Step 1: import the element to test -->
     <link rel="import" href="../img-slider.html">
+    <link rel="import" href="../../test-fixture/test-fixture.html">
   </head>
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <img-slider></img-slider>
+        <img-slider></img-slider>
 
     <script>
-      var myEl = document.querySelector('img-slider');
+      var imgSlider = document.querySelector("img-slider");
+
+      var imgArray = [
+        "http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg",
+        "http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg",
+        "https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg"
+      ];
+
+      imgSlider.imgUrlArray = imgArray;
+
+      function imgSliderDefaultData(imgSlider){
+        var slidesArray = imgSlider.querySelectorAll("img");
+        var numberSlides = slidesArray.length;
+        var defaultSlide = imgSlider.querySelector("img[active]");
+        var defaultSrc = defaultSlide.src;
+
+          return {
+            slidesArray: slidesArray,
+            numberSlides: numberSlides,
+            defaultSrc: defaultSrc,
+            defaultSlide: defaultSlide
+          }
+      };
+
+
+      function changeActiveSlide(index){
+        imgSlider.querySelector("img[active]").removeAttribute("active");
+
+        var targetUrl = imgArray[index];
+        imgSlider._currentSlideIndex = index;
+
+        imgSlider.querySelector("img[src='" + targetUrl + "']").setAttribute("active", "");
+      }
 
       suite('<img-slider>', function() {
 
-        var imgArray = [
-          "http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg",
-          "http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg",
-          "https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg"
-        ];
-
-        myEl.imgUrlArray = imgArray;
-
-
         test('number of slides correct', function() {
-          var numberSlides = myEl.querySelectorAll("img").length;
+          var numberSlides = imgSlider.querySelectorAll("img").length;
           assert.equal(numberSlides, 3);
         });
 
         test('default slide correct', function(){
-          var defaultSrc = myEl.querySelector("img[active]").src;
+          var defaultSrc = imgSliderDefaultData(imgSlider).defaultSrc;
           assert.equal(defaultSrc, imgArray[0]);
         });
 
         test('next slide correct', function(){
-          myEl._nextSlide();
-          var defaultSrc = myEl.querySelector("img[active]").src;
+          imgSlider.nextSlide();
+          var defaultSrc = imgSliderDefaultData(imgSlider).defaultSrc;
           assert.equal(defaultSrc, imgArray[1]);
-
         });
+
+        test("next slide when the last is selected", function(){
+
+          changeActiveSlide(imgArray.length - 1);
+
+
+          //Pass 1 slide
+          imgSlider.nextSlide();
+
+          // Check that the new active slide is the first image
+          var currentActiveSrc = imgSlider.querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgArray[0]);
+
+
+        })
 
       });
     </script>
