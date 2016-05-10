@@ -29,35 +29,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script>
       var imgSlider = document.querySelector("img-slider");
 
-      var imgArray = [
+      imgSlider.imgUrlArray = [
         "http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg",
         "http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg",
         "https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg"
       ];
 
-      imgSlider.imgUrlArray = imgArray;
-
       suite('<img-slider>', function() {
 
         test('number of slides correct', function() {
-          var numberSlides = imgSlider.querySelectorAll("img").length;
+          var numberSlides = imgSlider.length();
           assert.equal(numberSlides, 3);
         });
 
         test('default slide correct', function(){
           var defaultSrc = imgSlider.querySelector("img[active]").src;
-          assert.equal(defaultSrc, imgArray[0]);
+          assert.equal(defaultSrc, imgSlider.getImgUrls()[0]);
         });
 
         test('next slide correct', function(){
           imgSlider.nextSlide();
           var defaultSrc = imgSlider.querySelector("img[active]").src;
-          assert.equal(defaultSrc, imgArray[1]);
+          assert.equal(defaultSrc, imgSlider.getImgUrls()[1]);
+          imgSlider.selectSlide(0);
         });
 
         test("next slide when the last is selected", function(){
 
-          imgSlider.selectSlide(imgArray.length - 1);
+          imgSlider.selectSlide(imgSlider.length() - 1);
 
 
           //Pass 1 slide
@@ -65,11 +64,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           // Check that the new active slide is the first image
           var currentActiveSrc = imgSlider.querySelector("img[active]").src;
-          assert.equal(currentActiveSrc, imgArray[0]);
-        })
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[0]);
+        });
 
+        test("click on right button", function(){
+          imgSlider.selectSlide(0);
+          var rightButton = imgSlider.querySelector(".control_right");
+          imgSlider.fire(new CustomEvent("tap"));
+
+          var currentActiveSrc = imgSlider.querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
+        });
       });
     </script>
-
   </body>
 </html>

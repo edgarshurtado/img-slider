@@ -212,6 +212,14 @@ Example:
       var targetSrc = this.imgUrlArray[index];
       Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
       this._currentSlideIndex = index;
+    },
+
+    length: function(){
+      return this._images.length;
+    },
+
+    getImgUrls: function(){
+      return this.imgUrlArray;
     }
   });
 
