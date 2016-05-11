@@ -105,14 +105,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
         })
 
-        test("authomatic slide change", function(done){
+        test("set Interval for slide change", function(done){
           imgSlider.interval = 2000;
 
           setTimeout(function(){
             assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[1]);
             done();
           }, 2000);
+        });
 
+        test("Stop interval", function(done){
+//          Start and stop interval
+          imgSlider.interval = 2000;
+          imgSlider.interval = 0;
+
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[0]);
+            done();
+          }, 2000);
         });
       });
     </script>
