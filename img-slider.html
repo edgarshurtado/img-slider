@@ -88,11 +88,11 @@ Example:
 
   <template>
     <div class="wrapper">
-      <div class="control control_left"><span class="navigation_icon">&lt;</span></div>
+      <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
       <template is="dom-repeat" items="[[imgUrlArray]]">
         <img src="[[item]]" alt="">
       </template>
-      <div class="control control_right" on-tap="_nextSlide"><span class="navigation_icon">&gt;</span></div>
+      <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
     </div>
   </template>
 
@@ -106,32 +106,23 @@ Example:
 
     properties: {
 
+      /**
+       * Store the array of urls for the element
+       *
+       * @type Array
+       */
       imgUrlArray: Array,
 
       /**
-       * Describes the author of the element, but is really just an excuse to
-       * show off JSDoc annotations.
+       * The interval for slide change
        *
-       * @type {{name: string, image: string}}
+       * @type {{value: number, observer: String}}
        */
-      author: {
-        type: Object,
-        // Use `value` to provides a default value for a property, by setting it
-        // on your element's prototype.
-        //
-        // If you provide a function, as we do here, Polymer will call that
-        // _per element instance_.
-        //
-        // We do that to ensure that each element gets its own copy of the
-        // value, rather than having it shared across all instances (via the
-        // prototype).
-        value: function() {
-          return {
-            name:  'Dimitri Glazkov',
-            image: 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg',
-          };
-        }
-      },
+      interval: {
+        value: 0,
+        observer: '_handleChangeInterval'
+      }
+
     },
 
     // Element Lifecycle
@@ -158,6 +149,8 @@ Example:
       this._images = Polymer.dom(this.root).querySelectorAll("img");
       this._currentActive = this._images[this._currentSlideIndex];
       Polymer.dom(this._currentActive).setAttribute("active", "");
+
+      this._startInterval(this.interval);
     },
 
     detached: function() {
@@ -167,6 +160,9 @@ Example:
       // Use this to clean up anything you did in `attached`.
 
       Polymer.dom(this._currentActive).removeAttribute("active");
+
+      // Clear the timer stored
+      this._clearInterval();
     },
 
     // Element Behavior
@@ -189,6 +185,23 @@ Example:
       return 'img-slider says, ' + response;
     },
 
+    _clearInterval: function(){
+      if(this._timer !== undefined){
+        clearInterval(this._timer);
+      }
+    },
+
+    _startInterval: function(time){
+      if(this.interval > 0){
+        this._timer = setInterval(this.nextSlide.bind(this), time);
+      }
+    },
+
+    _handleChangeInterval: function(){
+      this._clearInterval();
+      this._startInterval(this.interval);
+    },
+
     nextSlide: function(){
       var numberImages = this._images.length;
       var currentActive = Polymer.dom(this._images[this._currentSlideIndex]);
@@ -207,7 +220,19 @@ Example:
       this._currentSlideIndex = newIndex;
     },
 
+    previousSlide: function(){
+      var prevSlideIndex;
+      if(this._currentSlideIndex === 0){
+        prevSlideIndex = this.length() -1;
+      } else {
+        prevSlideIndex = this._currentSlideIndex -1;
+      }
+
+      this.selectSlide(prevSlideIndex);
+    },
+
     selectSlide: function(index){
+
       Polymer.dom(this.$$("img[active]")).removeAttribute("active");
       var targetSrc = this.imgUrlArray[index];
       Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");

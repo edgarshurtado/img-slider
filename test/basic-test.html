@@ -19,27 +19,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- Step 1: import the element to test -->
     <link rel="import" href="../img-slider.html">
-    <link rel="import" href="../../test-fixture/test-fixture.html">
   </head>
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-        <img-slider></img-slider>
+          <img-slider></img-slider>
 
     <script>
-      var imgSlider = document.querySelector("img-slider");
 
-      imgSlider.imgUrlArray = [
-        "http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg",
-        "http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg",
-        "https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg"
-      ];
+      function reatach(el){
+        el.parentNode.removeChild(el);
+        document.body.appendChild(el);
+      }
+
 
       suite('<img-slider>', function() {
+        var imgSlider = document.querySelector("img-slider");
+        imgSlider.imgUrlArray = [
+          'http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg',
+          'http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg',
+          'https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg'
+        ];
+
+        setup(function(){
+          imgSlider.selectSlide(0);
+        });
 
         test('number of slides correct', function() {
-          var numberSlides = imgSlider.length();
-          assert.equal(numberSlides, 3);
+            assert.equal(imgSlider.length(), 3);
         });
 
         test('default slide correct', function(){
@@ -51,7 +58,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           imgSlider.nextSlide();
           var defaultSrc = imgSlider.querySelector("img[active]").src;
           assert.equal(defaultSrc, imgSlider.getImgUrls()[1]);
-          imgSlider.selectSlide(0);
         });
 
         test("next slide when the last is selected", function(){
@@ -67,13 +73,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           assert.equal(currentActiveSrc, imgSlider.getImgUrls()[0]);
         });
 
-        test("click on right button", function(){
-          imgSlider.selectSlide(0);
-          var rightButton = imgSlider.querySelector(".control_right");
-          imgSlider.fire(new CustomEvent("tap"));
+        test("click on right button when index 0", function(){
+          Polymer.dom(imgSlider.root).querySelector('.control.control_right').click();
 
-          var currentActiveSrc = imgSlider.querySelector("img[active]").src;
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
           assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
+        });
+
+        test("click on right button when index !0", function(){
+          imgSlider.selectSlide(1)
+
+          Polymer.dom(imgSlider.root).querySelector('.control.control_right').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[2]);
+        });
+
+        test("click on left button when index 0", function(){
+          Polymer.dom(imgSlider.root).querySelector('.control.control_left').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[2]);
+        });
+
+        test("click on left button when index !0", function(){
+          imgSlider.selectSlide(2);
+
+          Polymer.dom(imgSlider.root).querySelector('.control.control_left').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
+        })
+
+        test("authomatic slide change", function(done){
+          imgSlider.interval = 2000;
+
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[1]);
+            done();
+          }, 2000);
+
         });
       });
     </script>
