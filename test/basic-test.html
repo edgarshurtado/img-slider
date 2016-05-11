@@ -23,13 +23,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-          <img-slider></img-slider>
+    <div class="container">
+      <img-slider></img-slider>
+    </div>
 
     <script>
 
-      function reatach(el){
-        el.parentNode.removeChild(el);
-        document.body.appendChild(el);
+      function reatach(){
+        var el = document.querySelector('img-slider');
+        el.detached();
+        el.attached();
       }
 
 
@@ -42,6 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ];
 
         setup(function(){
+          imgSlider.interval = 0;
           imgSlider.selectSlide(0);
         });
 
@@ -124,6 +128,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             done();
           }, 2000);
         });
+
+        test("Click buttons when interval set", function(done){
+          imgSlider.interval = 2000;
+          reatach();
+          Polymer.dom(imgSlider.root).querySelector(".control_right").click();
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2]);
+            done();
+
+          }, 2000);
+
+
+        })
       });
     </script>
   </body>
