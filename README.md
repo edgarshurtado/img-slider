@@ -1,7 +1,6 @@
-# seed-element
+# img-slider
 
-An element providing a starting point for your own reusable Polymer elements.
-
+An image slider element which receives the images urls through an array.
 
 ## Dependencies
 
@@ -54,3 +53,6 @@ Then, you can run your tests on _all_ of your local browsers via:
 `wct -p` will keep the browsers alive after test runs (refresh to re-run).
 
 `wct test/some-file.html` will test only the files you specify.
+
+## Contribute
+
