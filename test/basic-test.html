@@ -31,15 +31,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var el = document.querySelector('img-slider');
         el.detached();
         el.attached();
-      }
+      };
+
+     function extractImgName(url){
+       url = url.split("/");
+       return url[url.length - 1];
+     }
 
 
       suite('<img-slider>', function() {
         var imgSlider = document.querySelector("img-slider");
         imgSlider.imgUrlArray = [
-          'http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg',
-          'http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg',
-          'https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg'
+          '../demo/cat1.jpg',
+          '../demo/cat2.jpg',
+          '../demo/cat3.jpg'
         ];
 
         setup(function(){
@@ -53,13 +58,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         test('default slide correct', function(){
           var defaultSrc = imgSlider.querySelector("img[active]").src;
-          assert.equal(defaultSrc, imgSlider.getImgUrls()[0]);
+          defaultSrc = extractImgName(defaultSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[0]);
+          assert.equal(defaultSrc, slideAssertSrc);
         });
 
         test('next slide correct', function(){
           imgSlider.nextSlide();
           var defaultSrc = imgSlider.querySelector("img[active]").src;
-          assert.equal(defaultSrc, imgSlider.getImgUrls()[1]);
+          defaultSrc = extractImgName(defaultSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[1]);
+          assert.equal(defaultSrc, slideAssertSrc);
         });
 
         test("next slide when the last is selected", function(){
@@ -72,14 +81,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           // Check that the new active slide is the first image
           var currentActiveSrc = imgSlider.querySelector("img[active]").src;
-          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[0]);
+          currentActiveSrc = extractImgName(currentActiveSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[0]);
+          assert.equal(currentActiveSrc, slideAssertSrc);
         });
 
         test("click on right button when index 0", function(){
           Polymer.dom(imgSlider.root).querySelector('.control.control_right').click();
 
           var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
-          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
+          currentActiveSrc = extractImgName(currentActiveSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[1]);
+          assert.equal(currentActiveSrc, slideAssertSrc);
         });
 
         test("click on right button when index !0", function(){
@@ -88,14 +101,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           Polymer.dom(imgSlider.root).querySelector('.control.control_right').click();
 
           var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
-          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[2]);
+          currentActiveSrc = extractImgName(currentActiveSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[2]);
+          assert.equal(currentActiveSrc, slideAssertSrc);
         });
 
         test("click on left button when index 0", function(){
           Polymer.dom(imgSlider.root).querySelector('.control.control_left').click();
 
           var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
-          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[2]);
+          currentActiveSrc = extractImgName(currentActiveSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[2]);
+          assert.equal(currentActiveSrc, slideAssertSrc);
         });
 
         test("click on left button when index !0", function(){
@@ -104,14 +121,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           Polymer.dom(imgSlider.root).querySelector('.control.control_left').click();
 
           var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
-          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
-        })
+          currentActiveSrc = extractImgName(currentActiveSrc);
+          var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[1]);
+          assert.equal(currentActiveSrc, slideAssertSrc);
+        });
 
         test("set Interval for slide change", function(done){
           imgSlider.interval = 20;
 
           setTimeout(function(){
-            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[1]);
+            var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+            currentActiveSrc = extractImgName(currentActiveSrc);
+            var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[1]);
+            assert.equal(currentActiveSrc, slideAssertSrc);
             done();
           }, 20);
         });
@@ -122,7 +144,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           imgSlider.interval = 0;
 
           setTimeout(function(){
-            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[0]);
+            var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+            currentActiveSrc = extractImgName(currentActiveSrc);
+            var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[0]);
+            assert.equal(currentActiveSrc, slideAssertSrc);
             done();
           }, 20);
         });
@@ -132,7 +157,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           reatach();
           Polymer.dom(imgSlider.root).querySelector(".control_right").click();
           setTimeout(function() {
-            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2]);
+            var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+            currentActiveSrc = extractImgName(currentActiveSrc);
+            var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[2]);
+            assert.equal(currentActiveSrc, slideAssertSrc);
             done();
 
           }, 20);
@@ -148,7 +176,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            }, 10);
 
            setTimeout(function(){
-             assert.notEqual(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2])
+             var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+             currentActiveSrc = extractImgName(currentActiveSrc);
+             var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[1]);
+             assert.equal(currentActiveSrc, slideAssertSrc);
              done();
            }, 20);
          });
@@ -161,7 +192,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }, 10);
 
           setTimeout(function(){
-            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2])
+            var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+            currentActiveSrc = extractImgName(currentActiveSrc);
+            var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[2]);
+            assert.equal(currentActiveSrc, slideAssertSrc);
             done();
           }, 20);
         });
@@ -173,7 +207,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             Polymer.dom(imgSlider.root).querySelector(".control_right").click();
 
             setTimeout(function(){
-              assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2])
+              var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+              currentActiveSrc = extractImgName(currentActiveSrc);
+              var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[2]);
+              assert.equal(currentActiveSrc, slideAssertSrc);
               done();
             }, 20);
           }, 10);
@@ -186,7 +223,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             Polymer.dom(imgSlider.root).querySelector(".control_left").click();
 
             setTimeout(function(){
-              assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[0])
+              var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+              currentActiveSrc = extractImgName(currentActiveSrc);
+              var slideAssertSrc = extractImgName(imgSlider.getImgUrls()[0]);
+              assert.equal(currentActiveSrc, slideAssertSrc);
               done();
             }, 20);
           }, 10);
