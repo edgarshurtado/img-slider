@@ -234,7 +234,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
         // Tests about size
-        test("Defaults values", function(){
+        test("Defaults size values", function(){
           var wrapper = Polymer.dom(imgSlider.root).querySelector(".wrapper").getBoundingClientRect();
           var sizeValues = {
             width: wrapper.width,
@@ -245,7 +245,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
 
 
-        test("Change Values", function(done){
+        test("Change size values", function(done){
           var newValues = {width: 500, height: 500};
           imgSlider.height = newValues.height;
           imgSlider.width = newValues.width;
