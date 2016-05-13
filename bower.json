@@ -1,10 +1,10 @@
 {
   "name": "img-slider",
-  "version": "1.0.0",
+  "version": "1.0",
   "authors": [
     "Edgar S. Hurtado <edsanhu@gmail.com>"
   ],
-  "description": "An element element slider fed by an array of src",
+  "description": "An element slider fed by an array of images urls",
   "keywords": [
     "web-component",
     "web-components",
