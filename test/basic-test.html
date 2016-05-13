@@ -127,18 +127,71 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }, 2000);
         });
 
-        test("Click buttons when interval set", function(done){
+        test("Click buttons when interval set", function(done) {
           imgSlider.interval = 2000;
           reatach();
           Polymer.dom(imgSlider.root).querySelector(".control_right").click();
-          setTimeout(function(){
+          setTimeout(function() {
             assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2]);
             done();
 
           }, 2000);
+        });
 
+          // Set an interval, wait half the time for the interval and check when the other half has passed that
+         // the image has not changed
+         test(" Check the interval is reset when clicking the right button", function(done){
+           imgSlider.interval = 2000;
 
-        })
+           setTimeout(function(){
+             Polymer.dom(imgSlider.root).querySelector(".control_right").click();
+           }, 1000);
+
+           setTimeout(function(){
+             assert.notEqual(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2])
+             done();
+           }, 2000);
+         });
+
+        test(" Check the interval is reset when clicking the left button", function(done){
+          imgSlider.interval = 2000;
+
+          setTimeout(function(){
+            Polymer.dom(imgSlider.root).querySelector(".control_left").click();
+          }, 1000);
+
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2])
+            done();
+          }, 2000);
+        });
+
+        test("The image is changed in time after clicking the right button", function(done){
+          imgSlider.interval = 2000;
+
+          setTimeout(function(){
+            Polymer.dom(imgSlider.root).querySelector(".control_right").click();
+
+            setTimeout(function(){
+              assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2])
+              done();
+            }, 2000);
+          }, 1000);
+        });
+
+        test("The image is changed in time after clicking the left button", function(done){
+          imgSlider.interval = 2000;
+
+          setTimeout(function(){
+            Polymer.dom(imgSlider.root).querySelector(".control_left").click();
+
+            setTimeout(function(){
+              assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[0])
+              done();
+            }, 2000);
+          }, 1000);
+        });
+
       });
     </script>
   </body>
