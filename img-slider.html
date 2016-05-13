@@ -23,6 +23,7 @@ Example:
   <style>
     :host {
       display: block;
+      position: relative;
     }
     .wrapper {
       width: 300px;
@@ -30,27 +31,68 @@ Example:
       overflow: auto;
       margin-left: auto;
       margin-right: auto;
+      position: relative;
     }
 
     img{
-      display: none;
-      position: relative;
+      position: absolute;
       width: 100%;
       top: 50%;
       transform: translateY(-50%);
       left: 0;
+      -webkit-transition: opacity 1s ease-in-out;
+      -moz-transition: opacity 1s ease-in-out;
+      -ms-transition: opacity 1s ease-in-out;
+      -o-transition: opacity 1s ease-in-out;
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
     }
 
     img[active]{
-      display: inline-block;
+      opacity: 1;
     }
+
+    .control {
+      width: 20%;
+      height: 100%;
+      background-color: rgba(0,0,0, 0.5);
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      color:white;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .control:hover {
+      opacity: 1;
+    }
+
+    .control_left{
+      left: 0;
+    }
+
+    .control_right{
+      right: 0;
+    }
+
+    .navigation_icon {
+      position: absolute;
+      font-size: 2em;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
   </style>
 
   <template>
     <div class="wrapper">
+      <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
       <template is="dom-repeat" items="[[imgUrlArray]]">
         <img src="[[item]]" alt="">
       </template>
+      <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
     </div>
   </template>
 
@@ -64,96 +106,119 @@ Example:
 
     properties: {
 
+      /**
+       * Store the array of urls for the element.
+       *
+       * @type Array
+       */
       imgUrlArray: Array,
 
       /**
-       * Describes the author of the element, but is really just an excuse to
-       * show off JSDoc annotations.
+       * The interval for slide change.
        *
-       * @type {{name: string, image: string}}
+       * @type {{value: number, observer: String}}
        */
-      author: {
-        type: Object,
-        // Use `value` to provides a default value for a property, by setting it
-        // on your element's prototype.
-        //
-        // If you provide a function, as we do here, Polymer will call that
-        // _per element instance_.
-        //
-        // We do that to ensure that each element gets its own copy of the
-        // value, rather than having it shared across all instances (via the
-        // prototype).
-        value: function() {
-          return {
-            name:  'Dimitri Glazkov',
-            image: 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg',
-          };
-        }
-      },
+      interval: {
+        value: 0,
+        observer: '_handleChangeInterval'
+      }
 
     },
 
     // Element Lifecycle
 
-    ready: function() {
-      // `ready` is called after all elements have been configured, but
-      // propagates bottom-up. This element's children are ready, but parents
-      // are not.
-      //
-      // This is the point where you should make modifications to the DOM (when
-      // necessary), or kick off any processes the element wants to perform.
-
-    },
-
     attached: function() {
-      // `attached` fires once the element and its parents have been inserted
-      // into a document.
-      //
-      // This is a good place to perform any work related to your element's
-      // visual state or active behavior (measuring sizes, beginning animations,
-      // loading resources, etc).
-
-      var images = Polymer.dom(this.root).querySelectorAll("img");
-      Polymer.dom(images[2]).setAttribute("active", "");
+      this._currentSlideIndex = 0;
+      this._images = Polymer.dom(this.root).querySelectorAll("img");
+      this._currentActive = this._images[this._currentSlideIndex];
+      Polymer.dom(this._currentActive).setAttribute("active", "");
+      this._startInterval(this.interval);
     },
 
     detached: function() {
-      // The analog to `attached`, `detached` fires when the element has been
-      // removed from a document.
-      //
-      // Use this to clean up anything you did in `attached`.
+      Polymer.dom(this._currentActive).removeAttribute("active");
+
+      // Clear the timer.
+      this._clearInterval();
     },
 
     // Element Behavior
 
-    /**
-     * The `img-slider-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event img-slider-lasers
-     * @detail {{sound: String}}
-     */
-
-    /**
-     * Sometimes it's just nice to say hi.
-     *
-     * @param {string} greeting A positive greeting.
-     * @return {string} The full greeting.
-     */
-    sayHello: function(greeting) {
-      var response = greeting || 'Hello World!';
-      return 'img-slider says, ' + response;
+      // Helpers && Event Handlers
+    _startInterval: function(time){
+      if(this.interval > 0){
+        this._timer = setInterval(this.nextSlide.bind(this), time);
+      }
     },
 
-    /**
-     * Attempts to destroy this element's enemies with an any beam of light!
-     *
-     * Or, at least, dispatches an event in the vain hope that someone else will
-     * do the zapping.
-     */
-    fireLasers: function() {
-      this.fire('img-slider-lasers', {sound: 'Pew pew!'});
-    }
+    _clearInterval: function(){
+      if(this._timer !== undefined){
+        clearInterval(this._timer);
+      }
+    },
 
+    _restartInterval: function(){
+      this._clearInterval();
+      this._startInterval(this.interval);
+    },
+
+    _handleChangeInterval: function(newVal, oldVal){
+      if(oldVal !== undefined){ // To avoid 2 timers to stack on the initialization of the element
+        this._clearInterval();
+        this._startInterval(this.interval);
+      }
+    },
+
+      // Element API
+    length: function(){
+      return this._images.length;
+    },
+
+    getImgUrls: function(){
+      return this.imgUrlArray;
+    },
+
+    nextSlide: function(){
+      // Selection of the new active slide index
+      var newIndex;
+      if(this._currentSlideIndex === this.length() - 1){ // Condition to restart the forward loop
+        newIndex = 0;
+      } else {
+        newIndex = this._currentSlideIndex + 1;
+      }
+
+      this.selectSlide(newIndex);
+    },
+
+    previousSlide: function(){
+      var newIndex;
+      if(this._currentSlideIndex === 0){
+        newIndex = this.length() -1;
+      } else {
+        newIndex = this._currentSlideIndex -1;
+      }
+
+      this.selectSlide(newIndex);
+    },
+
+      /**
+       * Changes the active slide by index
+       *
+       * @param index
+       */
+    selectSlide: function(index){
+      // Stop showing current slide
+      Polymer.dom(this.$$("img[active]")).removeAttribute("active");
+
+      // Set new slide
+      var targetSrc = this.imgUrlArray[index];
+      Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
+      this._currentSlideIndex = index;
+
+      // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
+      // because of the timer already set.
+      this._restartInterval();
+    }
   });
 
 </script>

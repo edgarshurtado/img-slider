@@ -16,41 +16,130 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
+
     <!-- Step 1: import the element to test -->
     <link rel="import" href="../img-slider.html">
   </head>
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <seed-element></seed-element>
+      <img-slider></img-slider>
 
     <script>
-      var myEl = document.querySelector('seed-element');
 
-      suite('<seed-element>', function() {
+      function reatach(){
+        var el = document.querySelector('img-slider');
+        el.detached();
+        el.attached();
+      }
 
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dimitri Glazkov');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
+
+      suite('<img-slider>', function() {
+        var imgSlider = document.querySelector("img-slider");
+        imgSlider.imgUrlArray = [
+          'http://www.momswhothink.com/images/stories/baby-names/female-cat-names.jpg',
+          'http://www.petsworld.in/blog/wp-content/uploads/2014/09/cute-kittens.jpg',
+          'https://www.petfinder.com/wp-content/uploads/2012/11/152177319-declawing-cats-632x475-e1354303246526-632x353.jpg'
+        ];
+
+        setup(function(){
+          imgSlider.interval = 0;
+          imgSlider.selectSlide(0);
         });
 
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'seed-element says, Hello World!');
-
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'seed-element says, greetings Earthlings');
+        test('number of slides correct', function() {
+            assert.equal(imgSlider.length(), 3);
         });
 
-        test('fires lasers', function(done) {
-          myEl.addEventListener('seed-element-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
+        test('default slide correct', function(){
+          var defaultSrc = imgSlider.querySelector("img[active]").src;
+          assert.equal(defaultSrc, imgSlider.getImgUrls()[0]);
+        });
+
+        test('next slide correct', function(){
+          imgSlider.nextSlide();
+          var defaultSrc = imgSlider.querySelector("img[active]").src;
+          assert.equal(defaultSrc, imgSlider.getImgUrls()[1]);
+        });
+
+        test("next slide when the last is selected", function(){
+
+          imgSlider.selectSlide(imgSlider.length() - 1);
+
+
+          //Pass 1 slide
+          imgSlider.nextSlide();
+
+          // Check that the new active slide is the first image
+          var currentActiveSrc = imgSlider.querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[0]);
+        });
+
+        test("click on right button when index 0", function(){
+          Polymer.dom(imgSlider.root).querySelector('.control.control_right').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
+        });
+
+        test("click on right button when index !0", function(){
+          imgSlider.selectSlide(1)
+
+          Polymer.dom(imgSlider.root).querySelector('.control.control_right').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[2]);
+        });
+
+        test("click on left button when index 0", function(){
+          Polymer.dom(imgSlider.root).querySelector('.control.control_left').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[2]);
+        });
+
+        test("click on left button when index !0", function(){
+          imgSlider.selectSlide(2);
+
+          Polymer.dom(imgSlider.root).querySelector('.control.control_left').click();
+
+          var currentActiveSrc = Polymer.dom(imgSlider.root).querySelector("img[active]").src;
+          assert.equal(currentActiveSrc, imgSlider.getImgUrls()[1]);
+        })
+
+        test("set Interval for slide change", function(done){
+          imgSlider.interval = 2000;
+
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[1]);
             done();
-          });
-          myEl.fireLasers();
+          }, 2000);
         });
 
+        test("Stop interval", function(done){
+//          Start and stop interval
+          imgSlider.interval = 2000;
+          imgSlider.interval = 0;
+
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[0]);
+            done();
+          }, 2000);
+        });
+
+        test("Click buttons when interval set", function(done){
+          imgSlider.interval = 2000;
+          reatach();
+          Polymer.dom(imgSlider.root).querySelector(".control_right").click();
+          setTimeout(function(){
+            assert.equal(Polymer.dom(imgSlider.root).querySelector("img[active]").src, imgSlider.getImgUrls()[2]);
+            done();
+
+          }, 2000);
+
+
+        })
       });
     </script>
-
   </body>
 </html>
