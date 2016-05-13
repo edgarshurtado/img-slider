@@ -39,9 +39,9 @@ Then, go ahead and download the element's dependencies:
     bower install
 
 
-## Playing With Your Element
+## Playing With img-slider
 
-If you wish to work on your element in isolation, we recommend that you use
+If you wish to work on `img-slider` in isolation, we recommend that you use
 [Polyserve](https://github.com/PolymerLabs/polyserve) to keep your element's
 bower dependencies in line. You can install it via:
 
@@ -55,7 +55,7 @@ Once running, you can preview your element at
 `http://localhost:8080/components/seed-element/`, where `seed-element` is the name of the directory containing it.
 
 
-## Testing Your Element
+## Testing img-slider
 
 Simply navigate to the `/test` directory of your element to run its tests. If
 you are using Polyserve: `http://localhost:8080/components/seed-element/test/`
@@ -78,6 +78,4 @@ Then, you can run your tests on _all_ of your local browsers via:
 `wct -p` will keep the browsers alive after test runs (refresh to re-run).
 
 `wct test/some-file.html` will test only the files you specify.
-
-## Contribute
 
