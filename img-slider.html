@@ -107,14 +107,14 @@ Example:
     properties: {
 
       /**
-       * Store the array of urls for the element
+       * Store the array of urls for the element.
        *
        * @type Array
        */
       imgUrlArray: Array,
 
       /**
-       * The interval for slide change
+       * The interval for slide change.
        *
        * @type {{value: number, observer: String}}
        */
@@ -127,62 +127,28 @@ Example:
 
     // Element Lifecycle
 
-    ready: function() {
-      // `ready` is called after all elements have been configured, but
-      // propagates bottom-up. This element's children are ready, but parents
-      // are not.
-      //
-      // This is the point where you should make modifications to the DOM (when
-      // necessary), or kick off any processes the element wants to perform.
-
-    },
-
     attached: function() {
-      // `attached` fires once the element and its parents have been inserted
-      // into a document.
-      //
-      // This is a good place to perform any work related to your element's
-      // visual state or active behavior (measuring sizes, beginning animations,
-      // loading resources, etc).
-
       this._currentSlideIndex = 0;
       this._images = Polymer.dom(this.root).querySelectorAll("img");
       this._currentActive = this._images[this._currentSlideIndex];
       Polymer.dom(this._currentActive).setAttribute("active", "");
-
       this._startInterval(this.interval);
     },
 
     detached: function() {
-      // The analog to `attached`, `detached` fires when the element has been
-      // removed from a document.
-      //
-      // Use this to clean up anything you did in `attached`.
-
       Polymer.dom(this._currentActive).removeAttribute("active");
 
-      // Clear the timer stored
+      // Clear the timer.
       this._clearInterval();
     },
 
     // Element Behavior
 
-    /**
-     * The `img-slider-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event img-slider-lasers
-     * @detail {{sound: String}}
-     */
-
-    /**
-     * Sometimes it's just nice to say hi.
-     *
-     * @param {string} greeting A positive greeting.
-     * @return {string} The full greeting.
-     */
-    sayHello: function(greeting) {
-      var response = greeting || 'Hello World!';
-      return 'img-slider says, ' + response;
+      // Helpers && Event Handlers
+    _startInterval: function(time){
+      if(this.interval > 0){
+        this._timer = setInterval(this.nextSlide.bind(this), time);
+      }
     },
 
     _clearInterval: function(){
@@ -191,10 +157,9 @@ Example:
       }
     },
 
-    _startInterval: function(time){
-      if(this.interval > 0){
-        this._timer = setInterval(this.nextSlide.bind(this), time);
-      }
+    _restartInterval: function(){
+      this._clearInterval();
+      this._startInterval(this.interval);
     },
 
     _handleChangeInterval: function(newVal, oldVal){
@@ -204,49 +169,55 @@ Example:
       }
     },
 
-    nextSlide: function(){
-      var numberImages = this._images.length;
-      var currentActive = Polymer.dom(this._images[this._currentSlideIndex]);
-      var newIndex;
-      Polymer.dom(currentActive).removeAttribute("active");
-
-      if(this._currentSlideIndex === numberImages -1){
-        newIndex = 0;
-      } else {
-        newIndex = this._currentSlideIndex + 1;
-      }
-
-      var newActive = Polymer.dom(this._images[newIndex]);
-      Polymer.dom(newActive).setAttribute("active", "");
-
-      this._currentSlideIndex = newIndex;
-    },
-
-    previousSlide: function(){
-      var prevSlideIndex;
-      if(this._currentSlideIndex === 0){
-        prevSlideIndex = this.length() -1;
-      } else {
-        prevSlideIndex = this._currentSlideIndex -1;
-      }
-
-      this.selectSlide(prevSlideIndex);
-    },
-
-    selectSlide: function(index){
-
-      Polymer.dom(this.$$("img[active]")).removeAttribute("active");
-      var targetSrc = this.imgUrlArray[index];
-      Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
-      this._currentSlideIndex = index;
-    },
-
+      // Element API
     length: function(){
       return this._images.length;
     },
 
     getImgUrls: function(){
       return this.imgUrlArray;
+    },
+
+    nextSlide: function(){
+      // Selection of the new active slide index
+      var newIndex;
+      if(this._currentSlideIndex === this.length() - 1){ // Condition to restart the forward loop
+        newIndex = 0;
+      } else {
+        newIndex = this._currentSlideIndex + 1;
+      }
+
+      this.selectSlide(newIndex);
+    },
+
+    previousSlide: function(){
+      var newIndex;
+      if(this._currentSlideIndex === 0){
+        newIndex = this.length() -1;
+      } else {
+        newIndex = this._currentSlideIndex -1;
+      }
+
+      this.selectSlide(newIndex);
+    },
+
+      /**
+       * Changes the active slide by index
+       *
+       * @param index
+       */
+    selectSlide: function(index){
+      // Stop showing current slide
+      Polymer.dom(this.$$("img[active]")).removeAttribute("active");
+
+      // Set new slide
+      var targetSrc = this.imgUrlArray[index];
+      Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
+      this._currentSlideIndex = index;
+
+      // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
+      // because of the timer already set.
+      this._restartInterval();
     }
   });
 
