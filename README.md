@@ -1,6 +1,31 @@
 # img-slider
 
-An image slider element which receives the images urls through an array.
+`<img-slider>` is an element that provides an easy to use images slider fed by an array of urls that
+points to images.
+
+`<img-slider>` can be fed both **declaratively** and **imperatively** through it's property `imgUrlArray`.
+
+Example:
+```html
+    <img-slider img-url-array="['/url1', '/url2']"></img-slider>
+```
+
+```javascript
+var element = document.querySelector('img-slider');
+element.imgUrlArray = ["/url1", "/url2"];
+```
+
+By default the slides doesn't change automatically, but the user can set a timer interval through the attribute
+`interval`. `interval` receives the number of milliseconds the user wants for the timer.
+
+Example:
+
+```html
+    <img-slider img-url-array="['/url1', '/url2']"
+                interval="2000"></img-slider>
+```
+
+The size of the slider can be set by using the attributes `width` and `height`
 
 ## Dependencies
 
