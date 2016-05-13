@@ -10,12 +10,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 
 <!--
-An element providing a solution to no problem in particular.
+`<img-slider>` is an element that provides an easy to use images slider fed by an array of urls that
+points to images.
+
+`<img-slider>` can be fed both **declaratively** and **imperatively** through it's property `imgUrlArray`.
 
 Example:
 
-    <img-slider></img-slider>
+    <img-slider img-url-array="['/url1', '/url2']"></img-slider>
 
+```
+var element = document.querySelector('img-slider');
+element.imgUrlArray = ["/url1", "/url2"];
+```
+
+
+By default the slides doesn't change automatically, but the user can set a timer interval through the attribute
+`interval`. `interval` receives the number of milliseconds the user wants for the timer.
+
+Example:
+
+    <img-slider img-url-array="['/url1', '/url2']"
+                interval="2000"></img-slider>
 @demo
 -->
 <dom-module id="img-slider">
@@ -116,7 +132,7 @@ Example:
       /**
        * The interval for slide change.
        *
-       * @type {{value: number, observer: String}}
+       * @type {Number}
        */
       interval: {
         value: 0,
@@ -144,12 +160,20 @@ Example:
 
     // Element Behavior
 
-      // Helpers && Event Handlers
+    /**
+     * Sets a new interval for automatic slide change.
+     *
+     * @param {Number} time
+     */
     _startInterval: function(time){
       if(this.interval > 0){
         this._timer = setInterval(this.nextSlide.bind(this), time);
       }
     },
+
+    /**
+     * Removes the current running interval.
+     */
 
     _clearInterval: function(){
       if(this._timer !== undefined){
@@ -157,11 +181,19 @@ Example:
       }
     },
 
+    /**
+     * Remove and set again the interval (this method is mainly a helper function to the user click
+     * events for changing the slide.
+     */
     _restartInterval: function(){
       this._clearInterval();
       this._startInterval(this.interval);
     },
 
+    /**
+     * Handler that listens the interval property value. If the property is changed it sets the interval
+     * to the new value.
+     */
     _handleChangeInterval: function(newVal, oldVal){
       if(oldVal !== undefined){ // To avoid 2 timers to stack on the initialization of the element
         this._clearInterval();
@@ -169,15 +201,27 @@ Example:
       }
     },
 
-      // Element API
+    /**
+     * Number of slides that has been rendered.
+     *
+     * @return {Number}
+    */
     length: function(){
       return this._images.length;
     },
 
+    /**
+     * Returns an array with the src value for the images rendered.
+     *
+     * @return {Array}
+     */
     getImgUrls: function(){
       return this.imgUrlArray;
     },
 
+    /**
+     * Show the next slide. The order of slides are the same than the array passed to the element
+     */
     nextSlide: function(){
       // Selection of the new active slide index
       var newIndex;
@@ -190,6 +234,9 @@ Example:
       this.selectSlide(newIndex);
     },
 
+    /**
+     * Show the previous slide. The order of slides are the same than the array passed to the element
+     */
     previousSlide: function(){
       var newIndex;
       if(this._currentSlideIndex === 0){
@@ -204,7 +251,7 @@ Example:
       /**
        * Changes the active slide by index
        *
-       * @param index
+       * @param {Number} index The index of the slide to be changed
        */
     selectSlide: function(index){
       // Stop showing current slide
