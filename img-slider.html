@@ -197,9 +197,11 @@ Example:
       }
     },
 
-    _handleChangeInterval: function(){
-      this._clearInterval();
-      this._startInterval(this.interval);
+    _handleChangeInterval: function(newVal, oldVal){
+      if(oldVal !== undefined){ // To avoid 2 timers to stack on the initialization of the element
+        this._clearInterval();
+        this._startInterval(this.interval);
+      }
     },
 
     nextSlide: function(){
