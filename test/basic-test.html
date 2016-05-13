@@ -192,6 +192,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }, 10);
         });
 
+
+        // Tests about size
+        test("Defaults values", function(){
+          var wrapper = Polymer.dom(imgSlider.root).querySelector(".wrapper").getBoundingClientRect();
+          var sizeValues = {
+            width: wrapper.width,
+            height: wrapper.height
+          };
+
+          assert.deepEqual(sizeValues, {width:300, height:300});
+        });
+
+
+        test("Change Values", function(done){
+          var newValues = {width: 500, height: 500};
+          imgSlider.height = newValues.height;
+          imgSlider.width = newValues.width;
+
+
+          flush(function(){
+            var wrapperStyles = Polymer.dom(imgSlider.root).querySelector(".wrapper").getBoundingClientRect();
+            var sizeValues = {
+              width: wrapperStyles.width,
+              height: wrapperStyles.height
+            };
+            assert.deepEqual(sizeValues, newValues);
+            done();
+          });
+        })
+
+
       });
     </script>
   </body>
