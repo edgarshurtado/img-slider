@@ -103,7 +103,7 @@ The size of the slider can be set by using the attributes `width` and `height`
   <template>
     <div class="wrapper">
       <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
-      <template is="dom-repeat" items="[[imgUrlArray]]">
+      <template is="dom-repeat" items="[[imgUrlArray]]" on-dom-change="_setDefaultSlide">
         <img src="[[item]]" alt="">
       </template>
       <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
@@ -165,12 +165,8 @@ The size of the slider can be set by using the attributes `width` and `height`
 
     // Element Lifecycle
 
-    attached: function() {
-      this._currentSlideIndex = 0;
-      this._images = Polymer.dom(this.root).querySelectorAll("img");
-      this._currentActive = this._images[this._currentSlideIndex];
-      Polymer.dom(this._currentActive).setAttribute("active", "");
-      this._startInterval(this.interval);
+    attached: function(){
+        this._setDefaultSlide();
     },
 
     detached: function() {
@@ -178,6 +174,16 @@ The size of the slider can be set by using the attributes `width` and `height`
 
       // Clear the timer.
       this._clearInterval();
+    },
+
+    _setDefaultSlide: function(){
+      this._images = Polymer.dom(this.root).querySelectorAll("img");
+      if(this._images.length > 0){
+          this._currentSlideIndex = 0;
+          this._currentActive = this._images[this._currentSlideIndex];
+          Polymer.dom(this._currentActive).setAttribute("active", "");
+          this._startInterval(this.interval);
+      }
     },
 
     // Element Behavior
@@ -299,5 +305,4 @@ The size of the slider can be set by using the attributes `width` and `height`
       this._restartInterval();
     }
   });
-
 </script>
