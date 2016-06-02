@@ -200,9 +200,9 @@ The size of the slider can be set by using the attributes `width` and `height`
 
     // Element Lifecycle
     ready:function(){
-        this.$.imgHolderTemplate.addEventListener("dom-change", function(){
-            this.selectSlide(0);
-        }.bind(this));
+//        this.$.imgHolderTemplate.addEventListener("dom-change", function(){
+//            this.selectSlide(0);
+//        }.bind(this));
     },
 
     attached: function(){
@@ -282,7 +282,7 @@ The size of the slider can be set by using the attributes `width` and `height`
      * @return {Number}
     */
     length: function(){
-      return this._images.length;
+      return Polymer.dom(this.root).querySelectorAll("img").length;
     },
 
     /**
@@ -315,7 +315,6 @@ The size of the slider can be set by using the attributes `width` and `height`
       } else {
         newIndex = this._currentSlideIndex + 1;
       }
-
       this.selectSlide(newIndex);
     },
 
@@ -346,8 +345,8 @@ The size of the slider can be set by using the attributes `width` and `height`
         }
 
         // Set new slide
-        var targetSrc = this.imgUrlArray[index];
-        Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
+        var targetSrc = Polymer.dom(this.root).querySelectorAll("img")[index];
+        Polymer.dom(targetSrc).setAttribute("active", "");
         this._currentSlideIndex = index;
 
         // Set the proper bullet active
