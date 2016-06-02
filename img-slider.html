@@ -102,11 +102,15 @@ The size of the slider can be set by using the attributes `width` and `height`
 
   <template>
     <div class="wrapper">
-      <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
+      <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
+        <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
+      </template>
       <template is="dom-repeat" items="[[imgUrlArray]]" on-dom-change="_setDefaultSlide">
         <img src="[[item]]" alt="">
       </template>
-      <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
+      <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
+        <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
+      </template>
     </div>
   </template>
 
@@ -227,6 +231,10 @@ The size of the slider can be set by using the attributes `width` and `height`
         this._clearInterval();
         this._startInterval(this.interval);
       }
+    },
+
+    _multipleItemsInArray: function(array){
+      return array.length > 1 || false;
     },
 
     /**
