@@ -133,7 +133,7 @@ The size of the slider can be set by using the attributes `width` and `height`
       <!-- Bullets navigation -->
       <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
         <div class="bulletWrapper layout horizontal around-justified">
-          <template is="dom-repeat" items="[[imgUrlArray]]">
+          <template id="bulletsTemplate" is="dom-repeat" items="[[imgUrlArray]]">
             <i class="bullet fa fa-circle"></i>
           </template>
         </div>
@@ -199,15 +199,10 @@ The size of the slider can be set by using the attributes `width` and `height`
     ],
 
     // Element Lifecycle
-    ready:function(){
-//        this.$.imgHolderTemplate.addEventListener("dom-change", function(){
-//            this.selectSlide(0);
-//        }.bind(this));
-    },
-
     attached: function(){
-        this._setDefaultSlide();
-//        this.selectSlide(0);
+        this.$.imgHolderTemplate.render(); // Force the imgs be ready for selecting the default one
+        console.log(Polymer.dom(this.root).querySelectorAll("img"));
+        this.selectSlide(0);
     },
 
     detached: function() {
