@@ -2,6 +2,7 @@
   Developed by Edgar S. Hurtado <edsanhu@gmail.com> on 2016
 -->
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 
 <!--
 `<img-slider>` is an element that provides an easy to use images slider fed by an array of urls that
@@ -36,7 +37,7 @@ The size of the slider can be set by using the attributes `width` and `height`
 -->
 <dom-module id="img-slider">
 
-  <style>
+  <style include="iron-flex iron-flex-alignment">
     :host {
       display: block;
       position: relative;
@@ -98,6 +99,12 @@ The size of the slider can be set by using the attributes `width` and `height`
       transform: translate(-50%, -50%);
     }
 
+    .bulletWrapper {
+      width: 30%;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
   </style>
 
   <template>
@@ -108,7 +115,7 @@ The size of the slider can be set by using the attributes `width` and `height`
       <template is="dom-repeat" items="[[imgUrlArray]]" on-dom-change="_setDefaultSlide">
         <img src="[[item]]" alt="">
       </template>
-      <div class="bulletWrapper">
+      <div class="bulletWrapper layout horizontal around-justified">
         <template is="dom-repeat" items="[[imgUrlArray]]">
           <div class="bullet">O</div>
         </template>
