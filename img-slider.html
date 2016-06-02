@@ -109,17 +109,23 @@ The size of the slider can be set by using the attributes `width` and `height`
 
   <template>
     <div class="wrapper">
+      <!-- Left Pad control -->
       <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
         <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
       </template>
+      <!-- Images to display -->
       <template is="dom-repeat" items="[[imgUrlArray]]" on-dom-change="_setDefaultSlide">
         <img src="[[item]]" alt="">
       </template>
-      <div class="bulletWrapper layout horizontal around-justified">
-        <template is="dom-repeat" items="[[imgUrlArray]]">
-          <div class="bullet">O</div>
-        </template>
-      </div>
+      <!-- Bullets navigation -->
+      <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
+        <div class="bulletWrapper layout horizontal around-justified">
+          <template is="dom-repeat" items="[[imgUrlArray]]">
+            <div class="bullet">O</div>
+          </template>
+        </div>
+      </template>
+      <!-- Right pad control-->
       <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
         <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
       </template>
