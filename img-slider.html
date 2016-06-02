@@ -101,8 +101,12 @@ The size of the slider can be set by using the attributes `width` and `height`
 
     .bulletWrapper {
       width: 30%;
-      margin-right: auto;
-      margin-left: auto;
+      position: absolute;
+      padding: 0.5em 0;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      z-index: 1000;
     }
 
   </style>
