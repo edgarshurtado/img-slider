@@ -3,6 +3,7 @@
 -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 
 <!--
 `<img-slider>` is an element that provides an easy to use images slider fed by an array of urls that
@@ -109,6 +110,14 @@ The size of the slider can be set by using the attributes `width` and `height`
       z-index: 1000;
     }
 
+    .fa {
+      color: lightgrey;
+    }
+
+    .fa[active] {
+      color: dodgerblue;
+    }
+
   </style>
 
   <template>
@@ -125,7 +134,7 @@ The size of the slider can be set by using the attributes `width` and `height`
       <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
         <div class="bulletWrapper layout horizontal around-justified">
           <template is="dom-repeat" items="[[imgUrlArray]]">
-            <div class="bullet">O</div>
+            <i class="bullet fa fa-circle"></i>
           </template>
         </div>
       </template>
@@ -204,10 +213,12 @@ The size of the slider can be set by using the attributes `width` and `height`
 
     _setDefaultSlide: function(){
       this._images = Polymer.dom(this.root).querySelectorAll("img");
+      var bullets = Polymer.dom(this.root).querySelectorAll(".bullet");
       if(this._images.length > 0){
           this._currentSlideIndex = 0;
           this._currentActive = this._images[this._currentSlideIndex];
           Polymer.dom(this._currentActive).setAttribute("active", "");
+          Polymer.dom(bullets[this._currentSlideIndex]).setAttribute("active", "");
           this._startInterval(this.interval);
       }
     },
@@ -316,23 +327,28 @@ The size of the slider can be set by using the attributes `width` and `height`
       this.selectSlide(newIndex);
     },
 
-      /**
-       * Changes the active slide by index
-       *
-       * @param {Number} index The index of the slide to be changed
-       */
+    /**
+     * Changes the active slide by index
+     *
+     * @param {Number} index The index of the slide to be changed
+    */
     selectSlide: function(index){
-      // Stop showing current slide
-      Polymer.dom(this.$$("img[active]")).removeAttribute("active");
+        // Stop showing current slide
+        Polymer.dom(this.$$("img[active]")).removeAttribute("active");
 
-      // Set new slide
-      var targetSrc = this.imgUrlArray[index];
-      Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
-      this._currentSlideIndex = index;
+        // Set new slide
+        var targetSrc = this.imgUrlArray[index];
+        Polymer.dom(this.$$("img[src='" + targetSrc + "']")).setAttribute("active", "");
+        this._currentSlideIndex = index;
 
-      // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
-      // because of the timer already set.
-      this._restartInterval();
+        // Set the proper bullet active
+        var bullets = Polymer.dom(this.root).querySelectorAll(".bullet");
+        Polymer.dom(this.$$("i[active]")).removeAttribute("active"); // Remove active bullet
+        Polymer.dom(bullets[index]).setAttribute("active", ""); // Set new active bullet
+
+        // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
+        // because of the timer already set.
+        this._restartInterval();
     }
   });
 </script>
