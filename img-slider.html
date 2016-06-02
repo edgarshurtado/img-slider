@@ -205,7 +205,7 @@ The size of the slider can be set by using the attributes `width` and `height`
     },
 
     detached: function() {
-      Polymer.dom(this._currentActive).removeAttribute("active");
+      Polymer.dom(this.$$("img[active")).removeAttribute("active");
 
       // Clear the timer.
       this._clearInterval();
