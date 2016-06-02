@@ -108,6 +108,11 @@ The size of the slider can be set by using the attributes `width` and `height`
       <template is="dom-repeat" items="[[imgUrlArray]]" on-dom-change="_setDefaultSlide">
         <img src="[[item]]" alt="">
       </template>
+      <div class="bulletWrapper">
+        <template is="dom-repeat" items="[[imgUrlArray]]">
+          <div class="bullet">O</div>
+        </template>
+      </div>
       <template is="dom-if" if="[[_multipleItemsInArray(imgUrlArray)]]">
         <div class="control control_right" on-tap="nextSlide"><span class="navigation_icon">&gt;</span></div>
       </template>

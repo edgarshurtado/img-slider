@@ -285,7 +285,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             assert.deepEqual(resultsToTest, {left: true, right: true}, "Both controls are hidden");
             done();
           })
-        })
+        });
+
+        test("Bullet count", function(done){
+          imgSlider.imgUrlArray = ["http://imgrandom","http://imgrandom", "http://imgrandom"];
+          flush(function(){
+            var numberBullets = Polymer.dom(imgSlider.root).querySelectorAll(".bullet").length;
+            assert.equal(numberBullets, 3);
+            done();
+          });
+        });
       });
     </script>
   </body>
