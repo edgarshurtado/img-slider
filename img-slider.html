@@ -127,7 +127,7 @@ The size of the slider can be set by using the attributes `width` and `height`
         <div class="control control_left" on-tap="previousSlide"><span class="navigation_icon">&lt;</span></div>
       </template>
       <!-- Images to display -->
-      <template is="dom-repeat" items="[[imgUrlArray]]" on-dom-change="_setDefaultSlide">
+      <template id="imgHolderTemplate" is="dom-repeat" items="[[imgUrlArray]]">
         <img src="[[item]]" alt="">
       </template>
       <!-- Bullets navigation -->
@@ -199,9 +199,15 @@ The size of the slider can be set by using the attributes `width` and `height`
     ],
 
     // Element Lifecycle
+    ready:function(){
+        this.$.imgHolderTemplate.addEventListener("dom-change", function(){
+            this.selectSlide(0);
+        }.bind(this));
+    },
 
     attached: function(){
         this._setDefaultSlide();
+//        this.selectSlide(0);
     },
 
     detached: function() {
@@ -334,7 +340,10 @@ The size of the slider can be set by using the attributes `width` and `height`
     */
     selectSlide: function(index){
         // Stop showing current slide
-        Polymer.dom(this.$$("img[active]")).removeAttribute("active");
+        var imgActive = this.$$("img[active]");
+        if(imgActive){
+            Polymer.dom(imgActive).removeAttribute("active");
+        }
 
         // Set new slide
         var targetSrc = this.imgUrlArray[index];
@@ -343,8 +352,13 @@ The size of the slider can be set by using the attributes `width` and `height`
 
         // Set the proper bullet active
         var bullets = Polymer.dom(this.root).querySelectorAll(".bullet");
-        Polymer.dom(this.$$("i[active]")).removeAttribute("active"); // Remove active bullet
-        Polymer.dom(bullets[index]).setAttribute("active", ""); // Set new active bullet
+        if(bullets.length > 0){ // Wait until the bullets are rendered
+            var activeBullet = this.$$(".bullet[active]");
+            if(activeBullet){
+                Polymer.dom(activeBullet).removeAttribute("active"); // Remove active bullet
+            }
+            Polymer.dom(bullets[index]).setAttribute("active", ""); // Set new active bullet
+        }
 
         // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
         // because of the timer already set.
