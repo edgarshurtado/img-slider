@@ -201,7 +201,6 @@ The size of the slider can be set by using the attributes `width` and `height`
     // Element Lifecycle
     attached: function(){
         this.$.imgHolderTemplate.render(); // Force the imgs be ready for selecting the default one
-        console.log(Polymer.dom(this.root).querySelectorAll("img"));
         this.selectSlide(0);
     },
 
@@ -210,18 +209,6 @@ The size of the slider can be set by using the attributes `width` and `height`
 
       // Clear the timer.
       this._clearInterval();
-    },
-
-    _setDefaultSlide: function(){
-      this._images = Polymer.dom(this.root).querySelectorAll("img");
-      var bullets = Polymer.dom(this.root).querySelectorAll(".bullet");
-      if(this._images.length > 0){
-          this._currentSlideIndex = 0;
-          this._currentActive = this._images[this._currentSlideIndex];
-          Polymer.dom(this._currentActive).setAttribute("active", "");
-          Polymer.dom(bullets[this._currentSlideIndex]).setAttribute("active", "");
-          this._startInterval(this.interval);
-      }
     },
 
     // Element Behavior
