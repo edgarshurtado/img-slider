@@ -160,7 +160,10 @@ The size of the slider can be set by using the attributes `width` and `height`
        *
        * @type Array
        */
-      imgUrlArray: Array,
+      imgUrlArray: {
+          type: Array,
+          observer: "_setDefault"
+      },
 
       /**
        * The interval for slide change.
@@ -212,6 +215,16 @@ The size of the slider can be set by using the attributes `width` and `height`
     },
 
     // Element Behavior
+
+      /**
+       * Observer for imgUrlArray. Everytime the imgs are changed the active img is set to the first one of the new
+       * array
+       */
+    _setDefault: function(newValue, oldValue){
+        if(oldValue !== undefined){ // Avoid the first execution that will be handled by the attached method
+            this.selectSlide(0);
+        }
+    },
 
     /**
      * Sets a new interval for automatic slide change.
