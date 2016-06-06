@@ -1,29 +1,35 @@
 # img-slider
 
 `<img-slider>` is an element that provides an easy to use images slider fed by an array of urls that
-points to images.
+points to images. This array of urls can be changed programatically and `<img-slider>` will take care of all the
+changes needed.
 
 `<img-slider>` can be fed both **declaratively** and **imperatively** through it's property `imgUrlArray`.
 
 Example:
-```html
-    <img-slider img-url-array="['/url1', '/url2']"></img-slider>
-```
 
-```javascript
+<img-slider img-url-array='["/url1", "/url2"]'></img-slider>
+
+> Note the use of the single and double quotes. You have to respect the structure in order to the element to work
+
+```
 var element = document.querySelector('img-slider');
 element.imgUrlArray = ["/url1", "/url2"];
 ```
+
 
 By default the slides doesn't change automatically, but the user can set a timer interval through the attribute
 `interval`. `interval` receives the number of milliseconds the user wants for the timer.
 
 Example:
 
-```html
-    <img-slider img-url-array="['/url1', '/url2']"
-                interval="2000"></img-slider>
-```
+<img-slider img-url-array="['/url1', '/url2']"
+            interval="2000"></img-slider>
+
+
+The UI for change images manually are a couple of pads at both sides of the image to change forward and backwards.
+Besides, for giving some feedback to the user about the number of the images in the slider, there's a bullet navigation
+panel at the bottom of the slider (And those buttons can be pressed as well for navigation).
 
 The size of the slider can be set by using the attributes `width` and `height`
 
@@ -38,10 +44,18 @@ Then, go ahead and download the element's dependencies:
 
     bower install
 
+## Install img-slider
+
+For installing the component just run on you CLI
+
+```
+bower install --save https://github.com/edgarshurtado/img-slider.git
+```
+
 
 ## Playing With img-slider
 
-If you wish to work on `img-slider` in isolation, we recommend that you use
+If you wish to work on `img-slider` in isolation, I recommend that you use
 [Polyserve](https://github.com/PolymerLabs/polyserve) to keep your element's
 bower dependencies in line. You can install it via:
 
