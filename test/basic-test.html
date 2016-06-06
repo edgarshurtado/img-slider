@@ -260,7 +260,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             assert.deepEqual(sizeValues, newValues);
             done();
           });
-        })
+        });
+
+
+        // Tests dinamic change img
+        test("Change img programatically", function(done){
+          var prevImgCount = Polymer.dom(imgSlider.root).querySelectorAll("img").length;
+          imgSlider.imgUrlArray = imgSlider.imgUrlArray.slice(1);
+          flush(function() {
+            var imgCount = Polymer.dom(imgSlider.root).querySelectorAll("img").length;
+            assert.equal(imgCount, 2);
+            done();
+          })
+        });
+
+        test("Control buttons when there's one img", function(done){
+          imgSlider.imgUrlArray = ["http://imgrandom"];
+          flush(function(){
+            var controlButtons = imgSlider.querySelectorAll(".control");
+            var resultsToTest = {
+              left: controlButtons[0].style.display === "none",
+              right: controlButtons[1].style.display === "none"
+            };
+            assert.deepEqual(resultsToTest, {left: true, right: true}, "Both controls are hidden");
+            done();
+          })
+        });
+
+        test("Bullet count", function(done){
+          imgSlider.imgUrlArray = ["http://imgrandom","http://imgrandom", "http://imgrandom"];
+          flush(function(){
+            var numberBullets = Polymer.dom(imgSlider.root).querySelectorAll(".bullet").length;
+            assert.equal(numberBullets, 3);
+            done();
+          });
+        });
       });
     </script>
   </body>
