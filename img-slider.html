@@ -154,236 +154,234 @@ The size of the slider can be set by using the attributes `width` and `height`
         </div>
     </template>
 
-</dom-module>
+    <script>
+        Polymer({
 
-<script>
+            is: 'img-slider',
 
-    Polymer({
+            properties: {
 
-        is: 'img-slider',
+                /**
+                 * Store the array of urls for the element.
+                 *
+                 * @type Array
+                 */
+                imgUrlArray: {
+                    type: Array,
+                    observer: "_setDefault"
+                },
 
-        properties: {
+                /**
+                 * The interval for slide change.
+                 *
+                 * @type {Number}
+                 */
+                interval: {
+                    type: Number,
+                    value: 0,
+                    observer: '_handleChangeInterval'
+                },
 
-            /**
-             * Store the array of urls for the element.
-             *
-             * @type Array
-             */
-            imgUrlArray: {
-                type: Array,
-                observer: "_setDefault"
+                /**
+                 * The width for the slides
+                 *
+                 * @type {Number}
+                 */
+                width: {
+                    type: Number,
+                    value: 300
+                },
+
+                /**
+                 * The height for the slides
+                 *
+                 * @type {Number}
+                 */
+                height: {
+                    type: Number,
+                    value: 300
+                }
             },
 
-            /**
-             * The interval for slide change.
-             *
-             * @type {Number}
-             */
-            interval: {
-                type: Number,
-                value: 0,
-                observer: '_handleChangeInterval'
-            },
+            observers: [
+                "_computeSliderSize(height, width)"
+            ],
 
-            /**
-             * The width for the slides
-             *
-             * @type {Number}
-             */
-            width: {
-                type: Number,
-                value: 300
-            },
-
-            /**
-             * The height for the slides
-             *
-             * @type {Number}
-             */
-            height: {
-                type: Number,
-                value: 300
-            }
-        },
-
-        observers: [
-            "_computeSliderSize(height, width)"
-        ],
-
-        // Element Lifecycle
-        attached: function() {
-            this.$.imgHolderTemplate.render(); // Force the imgs be ready for selecting the default one
-            this.selectSlide(0);
-        },
-
-        detached: function() {
-            Polymer.dom(this.$$("img[active")).removeAttribute("active");
-
-            // Clear the timer.
-            this._clearInterval();
-        },
-
-        // Element Behavior
-
-        /**
-         * Observer for imgUrlArray. Everytime the imgs are changed the active img is set to the first one of the new
-         * array
-         */
-        _setDefault: function(newValue, oldValue) {
-            if(oldValue !== undefined) { // Avoid the first execution that will be handled by the attached method
+            // Element Lifecycle
+            attached: function() {
+                this.$.imgHolderTemplate.render(); // Force the imgs be ready for selecting the default one
                 this.selectSlide(0);
-            }
-        },
+            },
 
-        /**
-         * Sets a new interval for automatic slide change.
-         *
-         * @param {Number} time
-         */
-        _startInterval: function(time) {
-            if(this.interval > 0) {
-                this._timer = setInterval(this.nextSlide.bind(this), time);
-            }
-        },
+            detached: function() {
+                Polymer.dom(this.$$("img[active")).removeAttribute("active");
 
-        /**
-         * Removes the current running interval.
-         */
+                // Clear the timer.
+                this._clearInterval();
+            },
 
-        _clearInterval: function() {
-            if(this._timer !== undefined) {
-                clearInterval(this._timer);
-            }
-        },
+            // Element Behavior
 
-        /**
-         * Remove and set again the interval (this method is mainly a helper function to the user click
-         * events for changing the slide.
-         */
-        _restartInterval: function() {
-            this._clearInterval();
-            this._startInterval(this.interval);
-        },
+            /**
+             * Observer for imgUrlArray. Everytime the imgs are changed the active img is set to the first one of the new
+             * array
+             */
+            _setDefault: function(newValue, oldValue) {
+                if(oldValue !== undefined) { // Avoid the first execution that will be handled by the attached method
+                    this.selectSlide(0);
+                }
+            },
 
-        /**
-         * Handler that listens the interval property value. If the property is changed it sets the interval
-         * to the new value.
-         */
-        _handleChangeInterval: function(newVal, oldVal) {
-            if(oldVal !== undefined) { // To avoid 2 timers to stack on the initialization of the element
+            /**
+             * Sets a new interval for automatic slide change.
+             *
+             * @param {Number} time
+             */
+            _startInterval: function(time) {
+                if(this.interval > 0) {
+                    this._timer = setInterval(this.nextSlide.bind(this), time);
+                }
+            },
+
+            /**
+             * Removes the current running interval.
+             */
+
+            _clearInterval: function() {
+                if(this._timer !== undefined) {
+                    clearInterval(this._timer);
+                }
+            },
+
+            /**
+             * Remove and set again the interval (this method is mainly a helper function to the user click
+             * events for changing the slide.
+             */
+            _restartInterval: function() {
                 this._clearInterval();
                 this._startInterval(this.interval);
-            }
-        },
+            },
 
-        _multipleItemsInArray: function(array) {
-            return array.length > 1 || false;
-        },
-
-        /**
-         * Number of slides that has been rendered.
-         *
-         * @return {Number}
-         */
-        length: function() {
-            return Polymer.dom(this.root).querySelectorAll("img").length;
-        },
-
-        /**
-         * Returns an array with the src value for the images rendered.
-         *
-         * @return {Array}
-         */
-        getImgUrls: function() {
-            return this.imgUrlArray;
-        },
-
-
-        /**
-         *
-         */
-        _computeSliderSize: function(height, width) {
-            var wrapper = this.$$(".wrapper");
-            wrapper.style.width = width + "px";
-            wrapper.style.height = height + "px";
-        },
-
-        /**
-         * Show the next slide. The order of slides are the same than the array passed to the element
-         */
-        nextSlide: function() {
-            // Selection of the new active slide index
-            var newIndex;
-            if(this._currentSlideIndex === this.length() - 1) { // Condition to restart the forward loop
-                newIndex = 0;
-            } else {
-                newIndex = this._currentSlideIndex + 1;
-            }
-            this.selectSlide(newIndex);
-        },
-
-        /**
-         * Show the previous slide. The order of slides are the same than the array passed to the element
-         */
-        previousSlide: function() {
-            var newIndex;
-            if(this._currentSlideIndex === 0) {
-                newIndex = this.length() - 1;
-            } else {
-                newIndex = this._currentSlideIndex - 1;
-            }
-
-            this.selectSlide(newIndex);
-        },
-
-        /**
-         * Changes the active slide by index
-         *
-         * @param {Number} index The index of the slide to be changed
-         */
-        selectSlide: function(index) {
-            // Stop showing current slide
-            var imgActive = this.$$("img[active]");
-            if(imgActive) {
-                Polymer.dom(imgActive).removeAttribute("active");
-            }
-
-            // Set new slide
-            var targetSrc = Polymer.dom(this.root).querySelectorAll("img")[index];
-            Polymer.dom(targetSrc).setAttribute("active", "");
-            this._currentSlideIndex = index;
-
-            // Set the proper bullet active
-            var bullets = Polymer.dom(this.root).querySelectorAll(".bullet");
-            if(bullets.length > 0) { // Wait until the bullets are rendered
-                var activeBullet = this.$$(".bullet[active]");
-                if(activeBullet) {
-                    Polymer.dom(activeBullet).removeAttribute("active"); // Remove active bullet
+            /**
+             * Handler that listens the interval property value. If the property is changed it sets the interval
+             * to the new value.
+             */
+            _handleChangeInterval: function(newVal, oldVal) {
+                if(oldVal !== undefined) { // To avoid 2 timers to stack on the initialization of the element
+                    this._clearInterval();
+                    this._startInterval(this.interval);
                 }
-                Polymer.dom(bullets[index]).setAttribute("active", ""); // Set new active bullet
+            },
+
+            _multipleItemsInArray: function(array) {
+                return array.length > 1 || false;
+            },
+
+            /**
+             * Number of slides that has been rendered.
+             *
+             * @return {Number}
+             */
+            length: function() {
+                return Polymer.dom(this.root).querySelectorAll("img").length;
+            },
+
+            /**
+             * Returns an array with the src value for the images rendered.
+             *
+             * @return {Array}
+             */
+            getImgUrls: function() {
+                return this.imgUrlArray;
+            },
+
+
+            /**
+             *
+             */
+            _computeSliderSize: function(height, width) {
+                var wrapper = this.$$(".wrapper");
+                wrapper.style.width = width + "px";
+                wrapper.style.height = height + "px";
+            },
+
+            /**
+             * Show the next slide. The order of slides are the same than the array passed to the element
+             */
+            nextSlide: function() {
+                // Selection of the new active slide index
+                var newIndex;
+                if(this._currentSlideIndex === this.length() - 1) { // Condition to restart the forward loop
+                    newIndex = 0;
+                } else {
+                    newIndex = this._currentSlideIndex + 1;
+                }
+                this.selectSlide(newIndex);
+            },
+
+            /**
+             * Show the previous slide. The order of slides are the same than the array passed to the element
+             */
+            previousSlide: function() {
+                var newIndex;
+                if(this._currentSlideIndex === 0) {
+                    newIndex = this.length() - 1;
+                } else {
+                    newIndex = this._currentSlideIndex - 1;
+                }
+
+                this.selectSlide(newIndex);
+            },
+
+            /**
+             * Changes the active slide by index
+             *
+             * @param {Number} index The index of the slide to be changed
+             */
+            selectSlide: function(index) {
+                // Stop showing current slide
+                var imgActive = this.$$("img[active]");
+                if(imgActive) {
+                    Polymer.dom(imgActive).removeAttribute("active");
+                }
+
+                // Set new slide
+                var targetSrc = Polymer.dom(this.root).querySelectorAll("img")[index];
+                Polymer.dom(targetSrc).setAttribute("active", "");
+                this._currentSlideIndex = index;
+
+                // Set the proper bullet active
+                var bullets = Polymer.dom(this.root).querySelectorAll(".bullet");
+                if(bullets.length > 0) { // Wait until the bullets are rendered
+                    var activeBullet = this.$$(".bullet[active]");
+                    if(activeBullet) {
+                        Polymer.dom(activeBullet).removeAttribute("active"); // Remove active bullet
+                    }
+                    Polymer.dom(bullets[index]).setAttribute("active", ""); // Set new active bullet
+                }
+
+                // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
+                // because of the timer already set.
+                this._restartInterval();
+            },
+
+            _handleBulletClick(ev) {
+                var images = Polymer.dom(this.root).querySelectorAll("img");
+
+                var index = Array.prototype.findIndex.call(images, function(img){
+                    var bulletReferenceName = this._splitAndLast(ev.target.dataImg, "/");
+                    var imgReferenceName = this._splitAndLast(img.src, "/");
+                    return bulletReferenceName === imgReferenceName;
+                }, this);
+
+                this.selectSlide(index);
+            },
+
+            _splitAndLast: function(url, separator){
+                var result = url.split(separator);
+                return result[result.length - 1];
             }
 
-            // Make the user click event to be the start of a new timer. Avoid the change of an img to quickly
-            // because of the timer already set.
-            this._restartInterval();
-        },
-
-        _handleBulletClick(ev) {
-            var images = Polymer.dom(this.root).querySelectorAll("img");
-
-            var index = Array.prototype.findIndex.call(images, function(img){
-                var bulletReferenceName = this._splitAndLast(ev.target.dataImg, "/");
-                var imgReferenceName = this._splitAndLast(img.src, "/");
-                return bulletReferenceName === imgReferenceName;
-            }, this);
-
-            this.selectSlide(index);
-        },
-
-        _splitAndLast: function(url, separator){
-            var result = url.split(separator);
-            return result[result.length - 1];
-        }
-
-    });
-</script>
+        });
+    </script>
+</dom-module>
